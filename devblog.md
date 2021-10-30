@@ -33,7 +33,7 @@ Refactor, only enough to pass this test.
 
 Then - we can refactor to make `shouldQuit` a member variable. Tests ensure we did it right.
 
-`Commit `
+`Commit 3ed9e2fc99156af22820bd955f036aa95a1086f4`
 
 Then - we can refactor to use getters and provide good encapsulation and access.
 

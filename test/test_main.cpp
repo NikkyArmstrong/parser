@@ -13,7 +13,7 @@ SCENARIO("the player can quit the game", "[parser]")
 
       THEN("the game exits")
       {
-          REQUIRE(_parser.shouldQuit);
+          REQUIRE(_parser.quitRequested());
       }
     }
   }
@@ -30,8 +30,8 @@ SCENARIO("the player is prompted for input", "[parser]")
       _parser.parse("");
       THEN("the game prompts the user to type something")
       {
-        REQUIRE(!_parser.shouldQuit);
-        REQUIRE(_parser.response == "Sorry?");
+        REQUIRE(!_parser.quitRequested());
+        REQUIRE(_parser.getResponse() == "Sorry?");
       }
     }
   }
