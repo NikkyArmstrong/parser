@@ -1,3 +1,8 @@
 #include <string>
 
-bool parse(std::string input);
+class Parser
+{
+  public:
+    std::string response;
+    bool parse(std::string input);
+};
