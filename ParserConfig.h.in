@@ -1,0 +1,3 @@
+// the configured options and settings for Parser
+#define Parser_VERSION_MAJOR @Parser_VERSION_MAJOR@
+#define Parser_VERSION_MINOR @Parser_VERSION_MINOR@
