@@ -1,16 +1,14 @@
 #include "parser.h"
 
-bool Parser::parse(std::string input)
+void Parser::parse(std::string input)
 {
   if (input == "exit")
   {
-    return true;
+    shouldQuit = true;
   }
 
   if (input.empty())
   {
     response = "Sorry?";
   }
-
-  return false;
 }

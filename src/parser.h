@@ -4,5 +4,7 @@ class Parser
 {
   public:
     std::string response;
-    bool parse(std::string input);
+    bool shouldQuit{ false };
+
+    void parse(std::string input);
 };
