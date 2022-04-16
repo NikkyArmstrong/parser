@@ -29,10 +29,20 @@ SCENARIO("the player is prompted for input", "[parser]")
     WHEN("the player presses 'enter' without typing anything")
     {
       _parser.parse("");
-      THEN("the game prompts the user to type something")
+      THEN("the game prompts the player to type something")
       {
         REQUIRE(!_parser.quitRequested());
         REQUIRE(_parser.getResponse() == "Sorry?");
+      }
+    }
+    WHEN("the player types a phrase")
+    {
+      std::string phraseInput = "any phrase";
+      _parser.parse(phraseInput);
+      THEN("the game prints that phrase back to the player")
+      {
+        REQUIRE(!_parser.quitRequested());
+        REQUIRE(_parser.getResponse() == "You said: " + phraseInput);
       }
     }
   }

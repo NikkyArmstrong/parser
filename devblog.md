@@ -61,3 +61,8 @@ Technically to pass this test we can make it return anything - we know this, so 
 
 Now we aren't getting the output in main we expect. We should be getting "Sorry?" if the input is empty. The test for this passes, but main isn't doing what we want.
 
+`Commit 49347e879e2184ebaadf4acd690b38def0f745f8`
+
+We'll write a new test to cover the other case - if the player writes anything else, return the same sentence.
+Write the test to check for this. It fails!
+
