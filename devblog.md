@@ -6,7 +6,7 @@ Text parser for text adventure using TDD
 ### Configuration
 Attempted to compile Catch2 using old vanilla makefile - that didn't work
 
-Installed cmake, followed tutorial for basic cmake compilation
+Installed cmake, followed tutorial for basic cmake compilation.
 
 Added test folder with new exe test_main
 Added 3rdparty folder for catch.hpp
@@ -40,3 +40,24 @@ Then - we can refactor to use getters and provide good encapsulation and access.
 `Commit 95009014b537476de1f2666576ef27c5a309f49a`
 
 Note there is no code in main for any of this!
+
+## Returned to this after some time
+How the heck do you compile?
+
+cmake needs to configure the project first, then build it
+
+per esemple
+
+Create a build directory. In the directory call build with the path to the source.
+`cd build`
+`cmake ../`
+`cmake --build .`
+
+This also lets you load it up in VS
+
+Tried to update main to use the parser instead of separate code. Realised that typing "exit" does not give a response.
+Wrote a test to check that exit gives a response - check that response is not empty. This fails, because the response is empty.
+Technically to pass this test we can make it return anything - we know this, so we can skip to the next step. Update the test to check the phrase we want.
+
+Now we aren't getting the output in main we expect. We should be getting "Sorry?" if the input is empty. The test for this passes, but main isn't doing what we want.
+

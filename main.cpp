@@ -2,24 +2,22 @@
 
 #include <iostream>
 #include <string>
-#include "ParserConfig.h"
-#include "parser.h"
+#include "src/parser.h"
 
 bool leave = false;
 std::string input;
 
 int main(int argc, char* argv[])
 {
-  while (!leave)
+  Parser p;
+
+  while (!p.quitRequested())
   {
     std::cout << "$ ";
     std::cin >> input;
 
-    if (input == "exit")
-    {
-      leave = true;
-    }
+    p.parse(input);
 
-    std::cout << input << std::endl;
+    std::cout << p.getResponse() << std::endl;
   }
 }

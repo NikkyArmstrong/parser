@@ -11,8 +11,9 @@ SCENARIO("the player can quit the game", "[parser]")
     {
       _parser.parse("exit");
 
-      THEN("the game exits")
+      THEN("the game gives a response, and exits")
       {
+          REQUIRE(_parser.getResponse() == "Exiting...");
           REQUIRE(_parser.quitRequested());
       }
     }
