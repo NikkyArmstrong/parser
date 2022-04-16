@@ -7,9 +7,12 @@ void Parser::parse(std::string input)
     shouldQuit = true;
     response = "Exiting...";
   }
-
-  if (input.empty())
+  else if (input.empty())
   {
     response = "Sorry?";
+  }
+  else
+  {
+    response = "You said: " + input;
   }
 }

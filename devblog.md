@@ -66,3 +66,15 @@ Now we aren't getting the output in main we expect. We should be getting "Sorry?
 We'll write a new test to cover the other case - if the player writes anything else, return the same sentence.
 Write the test to check for this. It fails!
 
+`Commit ee97923d53756570ec1bcb3f3f5a96302884742f`
+
+This meant we needed a little refactor to use if/else. All tests pass.
+
+Now re-look at main. Exit is working. You said: "" is working. Empty input isn't working.
+Maybe this is because stdin doesn't accept just a return.
+Debugging in VS shows that I'm right about this - it doesn't return from the cin if there is no input.
+
+We need to use `std::getline`
+
+
+

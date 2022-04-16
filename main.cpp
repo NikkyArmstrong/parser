@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
   while (!p.quitRequested())
   {
     std::cout << "$ ";
-    std::cin >> input;
+    std::getline(std::cin, input);
 
     p.parse(input);
 
