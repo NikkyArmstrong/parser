@@ -4,6 +4,9 @@ Text parser for a text adventure. This repo just holds the C++ code for the pars
 devblog.md follows the steps I've taken.
 
 ## Compile
+`cd build`
+`cmake ../`
+`cmake --build .`
 
 ## Run
 Tests: ./build/test/Debug/test.exe

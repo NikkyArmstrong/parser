@@ -21,7 +21,7 @@ Then - game quits
 `Commit 4d5c8739d56bd6207115244f86ea6941c9e215f7`
 
 Next test
-Given - game is running
+Given - game is running (this will get more useful later)
 When - user does not type anything
 Then - game tells the user to type something
 
@@ -76,5 +76,58 @@ Debugging in VS shows that I'm right about this - it doesn't return from the cin
 
 We need to use `std::getline`
 
+`Commit 15e438226abe9eb0a485a2d82cc54ed75cd0c031`
 
+Insert commit from big PC here.
+
+What do we do next. We're not sure, so think about what we'd like a text adventure to do, and write some tests.
+
+The first thing we could do, is just get "look" as a string, to return some kind of string, and pass the test that way.
+
+```
+_parser.parse("look");
+THEN("the game gives a description of the room")
+{
+  REQUIRE(_parser.getResponse() == "the description of the room");
+}
+```
+
+But, we've already shown that our parser supports this with other tests, so we can skip this step. This is where the tests will start dictating our architecture. Instead, make the test:
+
+```
+SCENARIO("the player can look", "[parser]")
+{
+  Parser _parser;
+  GIVEN("the game has a room")
+  {
+    Room _room("a nice room");
+    WHEN("the player inputs look")
+    {
+      _parser.parse("look");
+      THEN("the game gives a description of the room")
+      {
+        REQUIRE(_parser.getResponse() == _room.getDescription());
+      }
+    }
+  }
+}
+```
+
+I purposefully haven't made the test too complicated, this is part of it. I didn't say "the player is in the room" or that the room has anything in it. All we need to pass this test is a room class, that has a description string, with a getter. I've decided that the description will be set in the constructor. We don't need a setter, because the test doesn't call one. I can't think of a test case that would require us to use a setter for the description of the room class, and the design doesn't imply one.
+
+**Nikkynote: This should match a brief design, but show how the tests enhance and refine that design.**
+
+Make a room class:
+<insert code>?
+
+
+
+Ok, built the room, and it now compiles. But the test fails still. We finally need to start building the actual game framework.
+We can refactor the code, confident because the existing tests will tell us if we've done anything wonky. When the new test passes, we know we've done enough.
+That means - we need some kind of game driver, which holds a Parser object and can accept input. The driver also needs to know what room we're currently in.
+
+Try this
+```
+void processInput(std::string input);
+```
 
