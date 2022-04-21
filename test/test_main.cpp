@@ -48,3 +48,23 @@ SCENARIO("the player is prompted for input", "[parser]")
     }
   }
 }
+
+SCENARIO("the parser can identify correct grammar")
+{
+  GIVEN("we have a parser")
+  {
+    Parser _parser;
+    WHEN("the parser is given a verb")
+    {
+      _parser.parse("look");
+      THEN("the parser identifies that this is a validly constructed sentence")
+      {
+        REQUIRE(_parser.isLastInputValid());
+      }
+      AND_THEN("the parser identifies that this sentence contains a verb")
+      {
+        REQUIRE(_parser.getLastInputVerb() == "look");
+      }
+    }
+  }
+}

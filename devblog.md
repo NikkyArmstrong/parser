@@ -82,14 +82,47 @@ We need to use `std::getline`
 
 What do we do next. We could forge ahead and start building the game framework for the text adventure. But our goal is to write a parser. If we look at our design doc <!--TBC!--> we can see that the first step is to build a parser that interprets a sentence with english language and grammar rules.
 
-The most
+`Commit 0f1c5a88d826a0a07be653c7ff2262f01d57915a changed direction here`
 
+The most common thing to do in a text adventure is just "look". Without any other input, the game would usually return a description of the room. Let's have a think about what "look" should do, write the design, then write the tests.
+The design we've written so far is simple (if we want to change it later, we use the tests to help us refactor).
+We need the parser to identify the verb, (optional) preposition, (optional) article, and the object.
 
+`look (verb) at (preposition) the (article) donkey (object)`
+`look at donkey`
+`look donkey`
 
+all should give the same result.
 
+However if we want to also support `look under the donkey`, `look under donkey` is equivalent, but `look donkey` is not.
 
+The parser isn't connected to a game, so we can't do anything with this information, and we don't have the concept of a donkey, much less under the donkey, but the first step is getting it to actually parse. We need to write some tests to get the parser to identify what grammar constructs are present in the sentence, and whether the sentence is constructed correctly.
 
+```
+WHEN("the parser is given a verb")
+{
+  _parser.parse("look");
+  THEN("the parser identifies that this is a validly constructed sentence")
+  {
+    REQUIRE(_parser.isLastInputValid(), "Input was not a validly constructed sentence");
+  }
+  AND_THEN("the parser identifies that this sentence contains a verb")
+  {
+    REQUIRE(_parser.getLastInputVerb() == "look");
+  }
+}
+```
 
+For now, as always, we've just kinda guessed at the interface based on what the test needs to do. We need to check a) was the last input valid, and b) did the parser work out what the verb was in the last sentence.
+
+Obviously these tests don't pass, so we need to write enough code so they do. Start by defining the two test-facing functions.
+
+```
+bool isLastInputValid() { return true; }
+std::string getLastInputVerb() { return "look"; }
+```
+
+This is not just me being intentionally obtuse, we need to write more tests so that these functions don't pass them. /Then/ we can confidently write the real code. If we only code to the positive case, we run the risk of the negative case not working correctly in production code.
 
 <!-- Put all this later in the blog -->
 
