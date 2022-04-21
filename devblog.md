@@ -78,9 +78,22 @@ We need to use `std::getline`
 
 `Commit 15e438226abe9eb0a485a2d82cc54ed75cd0c031`
 
-Insert commit from big PC here.
+<!--Insert commit from big PC here.-->
 
-What do we do next. We're not sure, so think about what we'd like a text adventure to do, and write some tests.
+What do we do next. We could forge ahead and start building the game framework for the text adventure. But our goal is to write a parser. If we look at our design doc <!--TBC!--> we can see that the first step is to build a parser that interprets a sentence with english language and grammar rules.
+
+The most
+
+
+
+
+
+
+
+
+<!-- Put all this later in the blog -->
+
+We're not sure, so think about what we'd like a text adventure to do, and write some tests.
 
 The first thing we could do, is just get "look" as a string, to return some kind of string, and pass the test that way.
 
@@ -120,7 +133,7 @@ I purposefully haven't made the test too complicated, this is part of it. I didn
 Make a room class:
 <insert code>?
 
-
+`Commit 586afc83168f91297b0a64a2b77d6dbbf334d9a0`
 
 Ok, built the room, and it now compiles. But the test fails still. We finally need to start building the actual game framework.
 We can refactor the code, confident because the existing tests will tell us if we've done anything wonky. When the new test passes, we know we've done enough.
@@ -129,5 +142,15 @@ That means - we need some kind of game driver, which holds a Parser object and c
 Try this
 ```
 void processInput(std::string input);
+std::string getResponse();
 ```
 
+All this is is a pass-through for the parser. What we really want is the parser to be able to access the game state.
+
+We need a good architecture to achieve this.
+
+Options:
+- Driver owns the parser, pass the driver through to the parser in the parse call
+- create the driver inside the parser (parser owns the driver)
+- create a system where the parser can ask for the game state from some kind of provider
+  - static GetWorld() style function so we can do GetWorld()->GetCurrentRoom()
