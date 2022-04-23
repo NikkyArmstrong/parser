@@ -47,26 +47,29 @@ SCENARIO("the parser can identify verbs", "[parser]")
     Parser _parser;
     WHEN("the parser is given a verb")
     {
-      _parser.parse("look");
+      const std::string& v = GENERATE("exit", "look", "take");
+      _parser.parse(v);
       THEN("the parser identifies that this is a validly constructed sentence")
       {
         REQUIRE(_parser.isLastInputValid());
       }
       AND_THEN("the parser identifies that this sentence contains the correct verb")
       {
-        REQUIRE(_parser.getLastInputVerb() == "look");
+        REQUIRE(_parser.getLastInputVerb() == v);
       }
     }
-    AND_WHEN("the parser is given a verb")
+    AND_WHEN("the parser is given a valid verb ignoring case")
     {
-      _parser.parse("take");
+      const std::string& v = GENERATE("Look", "TAKE", "lOoK");
+      _parser.parse(v);
       THEN("the parser identifies that this is a validly constructed sentence")
       {
         REQUIRE(_parser.isLastInputValid());
       }
       AND_THEN("the parser identifies that this sentence contains the correct verb")
       {
-        REQUIRE(_parser.getLastInputVerb() == "take");
+        // case insensitive compare in this test
+        REQUIRE(_stricmp(_parser.getLastInputVerb().c_str(), v.c_str()) == 0);
       }
     }
     AND_WHEN("the parser is given an input that isn't a verb")

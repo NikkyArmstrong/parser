@@ -1,7 +1,12 @@
 #include "parser.h"
 
-void Parser::parse(const std::string& input)
+#include <algorithm>
+
+void Parser::parse(std::string input)
 {
+  // This intentionally takes a copy so we can manipulate the input to sanitise it.
+  std::transform(input.begin(), input.end(), input.begin(), [](unsigned char c) { return std::tolower(c); });
+
   if (isVerb(input))
   {
     m_isLastInputValid = true;

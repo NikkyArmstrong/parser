@@ -4,7 +4,7 @@
 class Parser
 {
   public:
-    void parse(const std::string& input);
+    void parse(std::string input);
 
     bool quitRequested() const { return m_shouldQuit; }
     std::string getResponse() const { return m_response; }

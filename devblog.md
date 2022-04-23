@@ -1,7 +1,7 @@
 # Parser
 Text parser for text adventure using TDD
 
-## Day 1
+## Post 1
 
 ### Configuration
 Attempted to compile Catch2 using old vanilla makefile - that didn't work
@@ -44,7 +44,7 @@ Then - we can refactor to use getters and provide good encapsulation and access.
 
 Note there is no code in main for any of this!
 
-## Returned to this after some time
+## Post 2
 How the heck do you compile?
 
 cmake needs to configure the project first, then build it
@@ -80,6 +80,8 @@ Debugging in VS shows that I'm right about this - it doesn't return from the cin
 We need to use `std::getline`
 
 `Commit 15e438226abe9eb0a485a2d82cc54ed75cd0c031`
+
+## Post 3
 
 <!--Insert commit from big PC here.-->
 
@@ -166,6 +168,8 @@ Start by making a vector of allowed verbs. This might not be the best data struc
 
 `Commit 0434657bcc15f4c4949e001d63ea936404d237a6`
 
+## Post 4
+
 Double check the design - if the verb is invalid, return an error. We don't have a test for this.
 We're going to double check the design (only focussing on verbs) against the tests and make sure everything is covered.
 We update the tests to use `isLastInputValid` to determine correct and incorrect inputs. We also realise one of the tests is now irrelevant! We don't want to just repeat a phrase back to the user. We want "Sorry?" for invalid, and at the moment, we don't care about valid responses, just that we have interpreted the phrase as valid.
@@ -174,8 +178,32 @@ We update the tests to use `isLastInputValid` to determine correct and incorrect
 
 Exit is a verb, so add it to the list. The we do a little bit more refactoring to make the code nicer (const correctness, helper functions, const refs etc). We are confident, because we have the tests.
 
+`Commit f3be9ce76d77484d189a43aa1eb4b2b75f7aae2f`
 
+## Post 5
 
+Next step - we're going to want to test every verb our game supports. At the moment we have three tests - exit, look, and take. Let's parameterise the tests to test each verb. Then when we add more, we can just update the parameters.
+
+```
+Parser _parser;
+WHEN("the parser is given a verb")
+{
+  auto v = GENERATE("exit", "look", "take");
+  _parser.parse(v);
+  THEN("the parser identifies that this is a validly constructed sentence")
+  {
+    REQUIRE(_parser.isLastInputValid());
+  }
+  AND_THEN("the parser identifies that this sentence contains the correct verb")
+  {
+    REQUIRE(_parser.getLastInputVerb() == v);
+  }
+}
+```
+
+The design doc says the game is case-insensitive. Let's add in some verbs to the parameters in different cases.
+
+`Commit 
 
 
 <!-- Put all this later in the blog -->
