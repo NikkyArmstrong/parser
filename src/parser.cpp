@@ -4,15 +4,30 @@ void Parser::parse(std::string input)
 {
   if (input == "exit")
   {
-    shouldQuit = true;
-    response = "Exiting...";
+    m_shouldQuit = true;
+    m_response = "Exiting...";
   }
   else if (input.empty())
   {
-    response = "Sorry?";
+    m_response = "Sorry?";
+  }
+  else if (std::find(verbs.begin(), verbs.end(), input) != verbs.end())
+  {
+    m_isLastInputValid = true;
+    m_lastInputVerb = input;
   }
   else
   {
-    response = "You said: " + input;
+    m_response = "You said: " + input;
   }
+}
+
+bool Parser::isLastInputValid()
+{
+  return m_isLastInputValid;
+}
+
+std::string Parser::getLastInputVerb()
+{
+  return m_lastInputVerb;
 }

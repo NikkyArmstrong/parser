@@ -12,7 +12,10 @@ Added test folder with new exe test_main
 Added 3rdparty folder for catch.hpp
 
 ### TDD to start
-Started with very simple examples
+
+I've started by writing a very basic design document for the beginning commands I will support and to get some thoughts down. These will become the basis for the first tests. As we progress, the design document will evolve alongside the tests and the code. (this is in a later commit `b9b486fcea816640b8c04e7a4c96d30a7a855237`)
+
+Started with very simple examples. First command in design doc: exit.
 One function, no class `bool parse(string)`
 Given - game is running
 When - user types exit
@@ -20,7 +23,7 @@ Then - game quits
 
 `Commit 4d5c8739d56bd6207115244f86ea6941c9e215f7`
 
-Next test
+Next test - look at the error conditions. We need to handle the user not typing anything. Simple way to require us to get a response from the parser.
 Given - game is running (this will get more useful later)
 When - user does not type anything
 Then - game tells the user to type something
@@ -80,11 +83,11 @@ We need to use `std::getline`
 
 <!--Insert commit from big PC here.-->
 
-What do we do next. We could forge ahead and start building the game framework for the text adventure. But our goal is to write a parser. If we look at our design doc <!--TBC!--> we can see that the first step is to build a parser that interprets a sentence with english language and grammar rules.
+What do we do next - look in the design doc. We could forge ahead and start building the game framework for the text adventure. But our goal is to write a parser. If we look at our design doc we can see that the first step is to build a parser that interprets a sentence with english language and grammar rules.
 
 `Commit 0f1c5a88d826a0a07be653c7ff2262f01d57915a changed direction here`
 
-The most common thing to do in a text adventure is just "look". Without any other input, the game would usually return a description of the room. Let's have a think about what "look" should do, write the design, then write the tests.
+The next command in the design doc (and the most common thing to do in a text adventure) is just "look". Without any other input, the game would usually return a description of the room. Let's have a think about what "look" should do, write the design, then write the tests.
 The design we've written so far is simple (if we want to change it later, we use the tests to help us refactor).
 We need the parser to identify the verb, (optional) preposition, (optional) article, and the object.
 
@@ -96,7 +99,7 @@ all should give the same result.
 
 However if we want to also support `look under the donkey`, `look under donkey` is equivalent, but `look donkey` is not.
 
-The parser isn't connected to a game, so we can't do anything with this information, and we don't have the concept of a donkey, much less under the donkey, but the first step is getting it to actually parse. We need to write some tests to get the parser to identify what grammar constructs are present in the sentence, and whether the sentence is constructed correctly.
+The parser isn't connected to a game, so we can't do anything with this information, and we don't have the concept of a donkey, much less under the donkey, but the first step is getting it to actually parse. We need to write some tests to get the parser to identify what grammar constructs are present in the sentence, and whether the sentence is constructed correctly. So we'll start by just getting the game to recognise verbs.
 
 ```
 WHEN("the parser is given a verb")
@@ -123,6 +126,48 @@ std::string getLastInputVerb() { return "look"; }
 ```
 
 This is not just me being intentionally obtuse, we need to write more tests so that these functions don't pass them. /Then/ we can confidently write the real code. If we only code to the positive case, we run the risk of the negative case not working correctly in production code.
+
+`Commit 98c96e316882c01f5fceb680d07ba91e26f94c62`
+
+Write a test for an invalid sentence - note that so far an invalid sentence is just one that does not exactly equal a verb we recognise.
+
+```
+AND_WHEN("the parser is not given a valid sentence")
+{
+  _parser.parse("foo");
+  THEN("the parser identifies that this is not a validly constructed sentence")
+  {
+    REQUIRE(!_parser.isLastInputValid());
+  }
+}
+```
+
+Then make it have to recognise a new verb. That way `getLastInputVerb` can't just return the string 'look'.
+
+```
+Scenario: the parser can identify correct grammar
+      Given: we have a parser
+   And when: the parser is given a different verb
+        And: the parser identifies that this sentence contains the correct verb
+-------------------------------------------------------------------------------
+D:\Code\Cpp\Parser\test\test_main.cpp(76)
+...............................................................................
+
+D:\Code\Cpp\Parser\test\test_main.cpp(78): FAILED:
+  REQUIRE( _parser.getLastInputVerb() == "take" )
+with expansion:
+  "look" == "take"
+```
+
+Note: later we will make these parameterised tests!
+
+Now we write code to make the tests pass.
+Start by making a vector of allowed verbs. This might not be the best data structure, but we know it will make the tests pass.
+
+`Commit 
+
+Double check the design - if the verb is invalid, return an error. We don't have a test for this.
+We're going to double check the design against the tests and make sure everything is covered.
 
 <!-- Put all this later in the blog -->
 

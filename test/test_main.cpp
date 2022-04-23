@@ -61,9 +61,29 @@ SCENARIO("the parser can identify correct grammar")
       {
         REQUIRE(_parser.isLastInputValid());
       }
-      AND_THEN("the parser identifies that this sentence contains a verb")
+      AND_THEN("the parser identifies that this sentence contains the correct verb")
       {
         REQUIRE(_parser.getLastInputVerb() == "look");
+      }
+    }
+    AND_WHEN("the parser is given a verb")
+    {
+      _parser.parse("take");
+      THEN("the parser identifies that this is a validly constructed sentence")
+      {
+        REQUIRE(_parser.isLastInputValid());
+      }
+      AND_THEN("the parser identifies that this sentence contains the correct verb")
+      {
+        REQUIRE(_parser.getLastInputVerb() == "take");
+      }
+    }
+    AND_WHEN("the parser is not given a verb")
+    {
+      _parser.parse("foo");
+      THEN("the parser identifies that this is not a validly constructed sentence")
+      {
+        REQUIRE(!_parser.isLastInputValid());
       }
     }
   }
