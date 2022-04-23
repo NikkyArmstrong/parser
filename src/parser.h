@@ -4,19 +4,23 @@
 class Parser
 {
   public:
-    void parse(std::string input);
+    void parse(const std::string& input);
 
-    bool quitRequested() { return m_shouldQuit; }
-    std::string getResponse() { return m_response; }
+    bool quitRequested() const { return m_shouldQuit; }
+    std::string getResponse() const { return m_response; }
 
-    bool isLastInputValid();
-    std::string getLastInputVerb();
+    bool isLastInputValid() const { return m_isLastInputValid; }
+    std::string getLastInputVerb() const { return m_lastInputVerb; }
 
   private:
-    std::vector<std::string> verbs{ "look", "take" };
+    bool isVerb(const std::string& input) const;
+    void updateResponse(const std::string& input);
+
+    std::vector<std::string> verbs{ "exit", "look", "take" };
 
     std::string m_response;
     std::string m_lastInputVerb;
+    const std::string INVALID_RESPONSE{ "Sorry?" };
 
     bool m_shouldQuit{ false };
     bool m_isLastInputValid{ false };

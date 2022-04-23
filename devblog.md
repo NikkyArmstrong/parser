@@ -162,13 +162,19 @@ with expansion:
 Note: later we will make these parameterised tests!
 
 Now we write code to make the tests pass.
-Start by making a vector of allowed verbs. This might not be the best data structure, but we know it will make the tests pass.
+Start by making a vector of allowed verbs. This might not be the best data structure, but we know it will make the tests pass. Once the tests pass, if we decide we want to use some other structure here (for speed or space or some other reason), the tests will make sure we refactor correctly. We also only want to do this if we have an identified reason. If we had 1000 verbs, the find call we've added might be a problem, and we might need to look at something else. For three verbs, its probably ok for now.
 
 `Commit 0434657bcc15f4c4949e001d63ea936404d237a6`
 
 Double check the design - if the verb is invalid, return an error. We don't have a test for this.
 We're going to double check the design (only focussing on verbs) against the tests and make sure everything is covered.
 We update the tests to use `isLastInputValid` to determine correct and incorrect inputs. We also realise one of the tests is now irrelevant! We don't want to just repeat a phrase back to the user. We want "Sorry?" for invalid, and at the moment, we don't care about valid responses, just that we have interpreted the phrase as valid.
+
+`Commit 825bd1da7bc654b03a582ec01b4b9f50c41ef5bd`
+
+Exit is a verb, so add it to the list. The we do a little bit more refactoring to make the code nicer (const correctness, helper functions, const refs etc). We are confident, because we have the tests.
+
+
 
 
 

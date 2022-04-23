@@ -22,7 +22,7 @@ SCENARIO("the player can quit the game", "[parser]")
   }
 }
 
-SCENARIO("the player is prompted for input", "[parser]")
+SCENARIO("the parser can deal with empty input", "[parser]")
 {
   GIVEN("The player is playing the game")
   {
@@ -37,20 +37,10 @@ SCENARIO("the player is prompted for input", "[parser]")
         REQUIRE(_parser.getResponse() == "Sorry?");
       }
     }
-    WHEN("the player types a phrase")
-    {
-      std::string phraseInput = "any phrase";
-      _parser.parse(phraseInput);
-      THEN("the game prints that phrase back to the player")
-      {
-        REQUIRE(!_parser.quitRequested());
-        REQUIRE(_parser.getResponse() == "You said: " + phraseInput);
-      }
-    }
   }
 }
 
-SCENARIO("the parser can identify correct grammar")
+SCENARIO("the parser can identify verbs", "[parser]")
 {
   GIVEN("we have a parser")
   {
@@ -79,7 +69,7 @@ SCENARIO("the parser can identify correct grammar")
         REQUIRE(_parser.getLastInputVerb() == "take");
       }
     }
-    AND_WHEN("the parser is not given a verb")
+    AND_WHEN("the parser is given an input that isn't a verb")
     {
       _parser.parse("foo");
       THEN("the parser identifies that this is not a validly constructed sentence")
