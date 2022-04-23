@@ -164,10 +164,13 @@ Note: later we will make these parameterised tests!
 Now we write code to make the tests pass.
 Start by making a vector of allowed verbs. This might not be the best data structure, but we know it will make the tests pass.
 
-`Commit 
+`Commit 0434657bcc15f4c4949e001d63ea936404d237a6`
 
 Double check the design - if the verb is invalid, return an error. We don't have a test for this.
-We're going to double check the design against the tests and make sure everything is covered.
+We're going to double check the design (only focussing on verbs) against the tests and make sure everything is covered.
+We update the tests to use `isLastInputValid` to determine correct and incorrect inputs. We also realise one of the tests is now irrelevant! We don't want to just repeat a phrase back to the user. We want "Sorry?" for invalid, and at the moment, we don't care about valid responses, just that we have interpreted the phrase as valid.
+
+
 
 <!-- Put all this later in the blog -->
 

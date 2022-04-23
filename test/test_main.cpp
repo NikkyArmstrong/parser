@@ -14,6 +14,7 @@ SCENARIO("the player can quit the game", "[parser]")
 
       THEN("the game gives a response, and exits")
       {
+          REQUIRE(_parser.isLastInputValid());
           REQUIRE(_parser.getResponse() == "Exiting...");
           REQUIRE(_parser.quitRequested());
       }
@@ -32,7 +33,7 @@ SCENARIO("the player is prompted for input", "[parser]")
       _parser.parse("");
       THEN("the game prompts the player to type something")
       {
-        REQUIRE(!_parser.quitRequested());
+        REQUIRE(!_parser.isLastInputValid());
         REQUIRE(_parser.getResponse() == "Sorry?");
       }
     }
@@ -84,6 +85,7 @@ SCENARIO("the parser can identify correct grammar")
       THEN("the parser identifies that this is not a validly constructed sentence")
       {
         REQUIRE(!_parser.isLastInputValid());
+        REQUIRE(_parser.getResponse() == "Sorry?");
       }
     }
   }
