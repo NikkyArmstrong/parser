@@ -11,13 +11,20 @@ int main(int argc, char* argv[])
 {
   Parser p;
 
-  while (!p.quitRequested())
+  auto res = p.getTokens("test look foo");
+  std::cout << res.size() << std::endl;
+  for (auto& r : res)
   {
-    std::cout << "$ ";
-    std::getline(std::cin, input);
-
-    p.parse(input);
-
-    std::cout << p.getResponse() << std::endl;
+    std::cout << r << std::endl;
   }
+
+  // while (!p.quitRequested())
+  // {
+  //   std::cout << "$ ";
+  //   std::getline(std::cin, input);
+
+  //   p.parse(input);
+
+  //   std::cout << p.getResponse() << std::endl;
+  // }
 }

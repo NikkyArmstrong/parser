@@ -83,3 +83,85 @@ SCENARIO("the parser can identify verbs", "[parser]")
     }
   }
 }
+
+SCENARIO("the parser can identify grammatical parts of a sentence", "[parser]")
+{
+  GIVEN("we have a parser")
+  {
+    Parser _parser;
+    WHEN("the parser is given a sentence with a verb and an object")
+    {
+      _parser.parse("look donkey");
+      THEN("the parser identifies that this is valid")
+      {
+        REQUIRE(_parser.isLastInputValid());
+      }
+      AND_THEN("the parser can give us the grammar from the sentence")
+      {
+        REQUIRE(_parser.getLastInputVerb() == "look");
+        REQUIRE(_parser.getLastInputObject() == "donkey");
+      }
+    }
+    AND_WHEN("the parser is given a sentence with a verb, a preposition, and an object")
+    {
+      _parser.parse("look at tree");
+      THEN("the parser identifies that this is valid")
+      {
+        REQUIRE(_parser.isLastInputValid());
+      }
+      AND_THEN("the parser can give us the grammar from the sentence")
+      {
+        REQUIRE(_parser.getLastInputVerb() == "look");
+        REQUIRE(_parser.getLastInputPreposition() == "at");
+        REQUIRE(_parser.getLastInputObject() == "tree");
+      }
+    }
+    AND_WHEN("the parser is given a sentence with a verb, preposition, definite article, and object")
+    {
+      _parser.parse("look at the dog");
+      THEN("the parser identifies that this is valid")
+      {
+        REQUIRE(_parser.isLastInputValid());
+      }
+      AND_THEN("the parser can give us the grammar from the sentence")
+      {
+        REQUIRE(_parser.getLastInputVerb() == "look");
+        REQUIRE(_parser.getLastInputPreposition() == "at");
+        REQUIRE(_parser.getLastInputArticle() == "the");
+        REQUIRE(_parser.getLastInputObject() == "dog");
+      }
+    }
+    AND_WHEN("the parser is given a sentence with a verb, definite article, and object")
+    {
+      _parser.parse("take the vase");
+      THEN("the parser identifies that this is valid")
+      {
+        REQUIRE(_parser.isLastInputValid());
+      }
+      AND_THEN("the parser can give us the grammar from the sentence")
+      {
+        REQUIRE(_parser.getLastInputVerb() == "take");
+        REQUIRE(_parser.getLastInputArticle() == "the");
+        REQUIRE(_parser.getLastInputObject() == "vase");
+      }
+    }
+  }
+}
+
+SCENARIO("the parser can identify sentences with invalid grammar construction", "[parser]")
+{
+  GIVEN("we have a parser")
+  {
+    Parser _parser;
+    WHEN("the parser is given an invalidly constructed sentence")
+    {
+      const std::string& s = GENERATE("at donkey look", "the donkey", "look at", "look the", "donkey at");
+      _parser.parse(s);
+      THEN("the parser identifies that this is invalid")
+      {
+        REQUIRE(!_parser.isLastInputValid());
+        REQUIRE(_parser.getResponse() == "Sorry?");
+      }
+    }
+  }
+}

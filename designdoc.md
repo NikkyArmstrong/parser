@@ -16,7 +16,7 @@ The subject is not expected to be provided ("I" is always implied, the player wi
 If the player does provide the subject, the game will return an error message. (TBA)
 
 ### Verbs
-A verb must be provided in each sentence. If no verb is recognised, the game will return an error message.
+A verb must be provided in each sentence.
 
 * **Exit** : exits the game.
 * **Look** : On its own, implies look at the current room. Returns the description of the current room and any items.
@@ -37,7 +37,7 @@ If a qualifying article is not supplied, "the" will be assumed. "look at tree" a
 
 ## Error conditions
 If the player provides no input, the game will respond appropriately, e.g. "Sorry?"
-
+If the player doesn't provide the input in a validly constructed way, the game will respond appropriately, e.g. "Sorry?"
 
 # For later
 * **to**: With **talk**.

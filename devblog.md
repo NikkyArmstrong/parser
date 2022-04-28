@@ -203,7 +203,46 @@ WHEN("the parser is given a verb")
 
 The design doc says the game is case-insensitive. Let's add in some verbs to the parameters in different cases.
 
-`Commit 
+`Commit fc4df325be615b3e3d6eb79ec8801018991a66ca`
+
+## Post 6
+
+Now we need the parser to start acting like a parser. We need it to consume the input from left to right, pattern matching each symbol until we either realise the sentence is invalid, or get to the end.
+
+For these tests, we just want a valid or invalid sentence check.
+
+As above,
+```
+look (verb) at (preposition) the (article) donkey (object)`
+look at the donkey
+look at donkey
+look donkey
+```
+are all valid, and for this verb
+```
+look
+```
+is also valid.
+
+For some verbs, they can't be alone. The article (the) is always optional. We will treat the preposition as always optional for now. Some verbs don't require a preposition (e.g. take, you don't `take at the thing`), some verbs have an obvious preposition (e.g. talk would use `to`), and some can accept multiple, but have an obvious default, like `look`. So for now, we will treat it as optional.
+
+Really we just want to consume and categorise the input and make sure we can correctly match the different grammar of the input string.
+
+So we write some tests!
+
+We will start with the tests for the cases above, assuming that all verbs, prepositions, objects, etc are valid in each situation. We also already have tests for the single verbs - we won't worry for now about how some verbs can't be on their own. We also won't worry about things like "take the vase" is valid but "look the vase" maybe isn't. Or that "take at the vase" is invalid. We're doing this in baby steps.
+
+We will also include some invalid tests. e.g. "at donkey look" is invalid, as is just the sentence "the donkey", etc. Again, the invalid tests are just for invalidly constructed sentences, not for any verbs we don't support or any verb-preposition-object combinations we don't support, for now. The design also only says we have to support "at" and "the" for now.
+
+```
+// todo insert tests (from line 87, "the parser can identify grammatical parts of a sentence")
+```
+
+Put in enough to make the tests compile, then run them and verify they fail.
+Then as usual, do just enough so they pass.
+
+Wrote a getTokens function and changed the parse function to go through an array of tokens.
+Expect some failures because still just parsing for verbs but we notice that "the parse can deal with empty input" is failing. All our new tests are failing, plus the one on empty input. This is the true value of the tests. We could easily have broken this without realising. Put in a check at the end that if we left the for loop without finding anything valid, set the invalid response. Now only our new tests are failing.
 
 
 <!-- Put all this later in the blog -->
