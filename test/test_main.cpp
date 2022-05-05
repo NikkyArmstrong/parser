@@ -155,7 +155,27 @@ SCENARIO("the parser can identify sentences with invalid grammar construction", 
     Parser _parser;
     WHEN("the parser is given an invalidly constructed sentence")
     {
-      const std::string& s = GENERATE("at donkey look", "the donkey", "look at", "look the", "donkey at");
+      const std::string& s = GENERATE("at donkey look", "the donkey", "donkey at");
+      _parser.parse(s);
+      THEN("the parser identifies that this is invalid")
+      {
+        REQUIRE(!_parser.isLastInputValid());
+        REQUIRE(_parser.getResponse() == "Sorry?");
+      }
+    }
+    WHEN("the parser is given an incomplete sentence")
+    {
+      const std::string& s = GENERATE("look at", "look the");
+      _parser.parse(s);
+      THEN("the parser identifies that this is invalid")
+      {
+        REQUIRE(!_parser.isLastInputValid());
+        REQUIRE(_parser.getResponse() == "Sorry?");
+      }
+    }
+    WHEN("the parser is given a sentence with nonsense words")
+    {
+      const std::string& s = GENERATE("take the t3st", "look at the $%_RT");
       _parser.parse(s);
       THEN("the parser identifies that this is invalid")
       {

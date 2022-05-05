@@ -244,6 +244,21 @@ Then as usual, do just enough so they pass.
 Wrote a getTokens function and changed the parse function to go through an array of tokens.
 Expect some failures because still just parsing for verbs but we notice that "the parse can deal with empty input" is failing. All our new tests are failing, plus the one on empty input. This is the true value of the tests. We could easily have broken this without realising. Put in a check at the end that if we left the for loop without finding anything valid, set the invalid response. Now only our new tests are failing.
 
+`Commit 11d2613f2382f90e1b237734e13ae5e0f20b8f4c`
+
+Add functions just the same as `isVerb` for `isPreposition` and `isArticle`. `isObject` is going to be a bit different. We don't know what kind of objects the game would include. We also can't make a vector of all the objects in the world. So what we'll do instead for now is check that the object is not a verb, preposition, or article, and that the object only contains alphanumeric characters using the world's most boring regex. And just to make sure the regex works, we'll add an invalid test for some nonsense characters in the object.
+
+(later we may have to parse for punctuation but for now we're ok. that's not in the gdd. later we will also make sure the objects exist in the game)
+
+The code doesn't parse for order, just that each thing in the sentence is valid, so now we need to make the tests for invalid strings pass. Start simply - if index = 0: verb, if index = 1: prep, article, object, index = 2: article, object, etc. We can generecise the code by saying `if (verbIsValid(index) && isVerb(token))`. This is easy enough to code but we can already see it doesn't scale.
+
+
+We can pass all the tests except some of the invalid ones. Inspecting the tests, I've split them up into invalid tests where the sentence is constructed in the wrong order (which I suspect will pass), sentences that are incomplete (e.g. "look at"), and sentences with nonsense characters. DOing this I realised my regex was wrong (\w vs [a-zA-Z]) and was proved right that unfinished sentences don't fail.
+
+`Commit `
+
+We'll update the design doc to mention what we'll do with incomplete sentences, and also to include an example of "valid" grammer but an invalid sentence "take at the vase".
+
 
 <!-- Put all this later in the blog -->
 

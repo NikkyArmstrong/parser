@@ -20,11 +20,20 @@ std::vector<std::string> getTokens(const std::string& input) const;
 
   private:
     bool isVerb(const std::string& input) const;
+    bool isPreposition(const std::string& input) const;
+    bool isArticle(const std::string& input) const;
+    bool isObject(const std::string& input) const;
+
     void updateResponse(const std::string& input);
 
-
+    bool verbIsValid(int index) { return index == 0; }
+    bool prepIsValid(int index) { return index == 1; }
+    bool articleIsValid(int index) { return index == 1 || index == 2; }
+    bool objectIsValid(int index) { return index == 1 || index == 2 || index == 3; }
 
     const std::vector<std::string> verbs{ "exit", "look", "take" };
+    const std::vector<std::string> prepositions{"at"};
+    const std::vector<std::string> articles{"the"};
 
     std::string m_response;
 
@@ -34,7 +43,6 @@ std::vector<std::string> getTokens(const std::string& input) const;
     std::string m_lastInputObject;
 
     const std::string INVALID_RESPONSE{ "Sorry?" };
-
     bool m_shouldQuit{ false };
     bool m_isLastInputValid{ false };
 };
