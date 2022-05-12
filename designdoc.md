@@ -38,6 +38,9 @@ If a qualifying article is not supplied, "the" will be assumed. "look at tree" a
 ## Error conditions
 If the player provides no input, the game will respond appropriately, e.g. "Sorry?"
 If the player doesn't provide the input in a validly constructed way, the game will respond appropriately, e.g. "Sorry?"
+If the player provides an incomplete sentence, e.g. "look at", the game will response appropriately, e.g. "Sorry?" if the sentence is completely un-parseable, or "Look at what?" if we can tell what is missing.
+
+Some combinations of otherwise valid sentences don't make sense. The parser will detect these, e.g. "Look at the vase" is valid but "take at the vase" is not.
 
 # For later
 * **to**: With **talk**.

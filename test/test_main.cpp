@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "../3rdparty/catch.hpp"
 
-#include "../src/parser.h"
+#include "../src/Parser.h"
 
 SCENARIO("the player can quit the game", "[parser]")
 {
@@ -12,11 +12,13 @@ SCENARIO("the player can quit the game", "[parser]")
     {
       _parser.parse("exit");
 
-      THEN("the game gives a response, and exits")
+      THEN("the game gives a response")
       {
-          REQUIRE(_parser.isLastInputValid());
-          REQUIRE(_parser.getResponse() == "Exiting...");
-          REQUIRE(_parser.quitRequested());
+        REQUIRE(_parser.getResponse() == "Exiting...");
+      }
+      AND_THEN("the game exits")
+      {
+        REQUIRE(_parser.quitRequested());
       }
     }
   }
@@ -165,15 +167,17 @@ SCENARIO("the parser can identify sentences with invalid grammar construction", 
     }
     WHEN("the parser is given an incomplete sentence")
     {
-      const std::string& s = GENERATE("look at", "look the");
-      _parser.parse(s);
+      _parser.parse("look at");
       THEN("the parser identifies that this is invalid")
       {
         REQUIRE(!_parser.isLastInputValid());
-        REQUIRE(_parser.getResponse() == "Sorry?");
+      }
+      AND_THEN("the parser gives a meaningful response")
+      {
+        REQUIRE(_parser.getResponse() == "look at what?");
       }
     }
-    WHEN("the parser is given a sentence with nonsense words")
+    WHEN("the parser is given a sentence with invalid characters")
     {
       const std::string& s = GENERATE("take the t3st", "look at the $%_RT");
       _parser.parse(s);
@@ -181,6 +185,57 @@ SCENARIO("the parser can identify sentences with invalid grammar construction", 
       {
         REQUIRE(!_parser.isLastInputValid());
         REQUIRE(_parser.getResponse() == "Sorry?");
+      }
+    }
+  }
+}
+
+SCENARIO("the parser can identify sentences that are validly constructed, but invalid English")
+{
+  GIVEN("we have a parser")
+  {
+    Parser _parser;
+    WHEN("the parser is given a sentence that is valid grammatically but not valid English")
+    {
+      _parser.parse("take at the vase");
+      THEN("the parser identifies that this is invalid")
+      {
+        REQUIRE(!_parser.isLastInputValid());
+        REQUIRE(_parser.getResponse() == "Sorry?");
+      }
+    }
+    AND_WHEN("the parser is given a sentence missing a bit")
+    {
+      _parser.parse("look the box");
+      {
+        REQUIRE(!_parser.isLastInputValid());
+        REQUIRE(_parser.getResponse() == "Try looking at something");
+      }
+    }
+  }
+}
+
+SCENARIO("the parser can detect which verbs are ok alone")
+{
+  GIVEN("we have a parser and a list of verbs")
+  {
+    Parser _parser;
+    WHEN("we input invalid lone verbs to the parser")
+    {
+      const std::string& s = GENERATE("take", "open");
+      _parser.parse(s);
+      THEN("the parser can identify that these are invalid on their own")
+      {
+        REQUIRE(!_parser.isLastInputValid());
+      }
+    }
+    AND_WHEN("we input valid lone words to the parser")
+    {
+      const std::string& s = GENERATE("look", "exit");
+      _parser.parse(s);
+      THEN("the parser can identify that these are valid on their own")
+      {
+        REQUIRE(_parser.isLastInputValid());
       }
     }
   }

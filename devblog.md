@@ -255,10 +255,41 @@ The code doesn't parse for order, just that each thing in the sentence is valid,
 
 We can pass all the tests except some of the invalid ones. Inspecting the tests, I've split them up into invalid tests where the sentence is constructed in the wrong order (which I suspect will pass), sentences that are incomplete (e.g. "look at"), and sentences with nonsense characters. DOing this I realised my regex was wrong (\w vs [a-zA-Z]) and was proved right that unfinished sentences don't fail.
 
-`Commit `
+`Commit 404f8484c18284dccdddfdc3ced79727efa14097`
 
 We'll update the design doc to mention what we'll do with incomplete sentences, and also to include an example of "valid" grammer but an invalid sentence "take at the vase".
 
+To be able to detect an incomplete or otherwise valid sentence, and also to be able to give a reasonable response beyond "Sorry?", we need some context for where we are and where we're going - i.e. we need context for the current state and valid transitions - a state machine. We'll write the missing tests first and then refactor our parser to be a state machine. This will be the biggest change / refactor we've done so far, so we will be relying on the tests to be solid. We can also move the test for "look the" from incomplete to invalid - "look the X" isn't a sentence we want to allow (take a leaf from Gateway and have prompt for Look at, look under, etc). These new tests should all fail.
+
+Start with an enum of states and a static function that returns if a transition is valid.
+
+First pass - try to replicate existing behaviour.
+```
+switch (currentState)
+{
+  case EGrammarState::Verb:
+    return true;
+  case EGrammarState::Preposition:
+    return nextState != EGrammarState::Verb;
+  case EGrammarState::Article:
+    return nextState != EGrammarState::Verb && nextState != EGrammarState::Preposition;
+  case EGrammarState::Object:
+    return false;
+}
+```
+
+Set current state to Start and check for a verb - and we can ditch the index on the for loop.
+The isTransitionValid function is going to quickly become unsustainable BUT its ensuring the tests are correct so we can refactor to something more complex AND its giving me ideas of how we'll do that.
+
+Add an "End" state to detect when its valid to end - this will pass the incomplete sentence tests. When the for loop is done, check to transition to the end state.
+
+...
+
+We have way more failures now! This is because we said it wasn't valid to go from Verb to End -> but it is in some cases. Let's  write a test for "exit" and "look" being valid on their own but not "take", "open", etc
+
+With that now we only have 3 fails. One is because the response to "look at" is not "look at what?" -> we don't support custom responses and probably this shouldn't be a test at this stage - but going into the next bit of code its ok.
+
+Now for the fun part - creating the actual states for the state machine. This is how we'll get specific behaviour for specific verbs.
 
 <!-- Put all this later in the blog -->
 

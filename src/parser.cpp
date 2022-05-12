@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "Parser.h"
 
 #include <algorithm>
 #include <regex>
@@ -15,38 +15,65 @@ void Parser::parse(std::string input)
 
   auto tokens = getTokens(input);
 
-  for (int i = 0; i < tokens.size(); ++i)
+  for (const auto& token : tokens)
   {
-    const std::string& token = tokens[i];
-
-    if (verbIsValid(i) && isVerb(token))
+    // Get the desired pending state:
+    EGrammarState pendingState;
+    if (isVerb(token))
     {
-      m_isLastInputValid = true;
+      pendingState = EGrammarState::Verb;
       m_lastInputVerb = token;
-
-      updateResponse(m_lastInputVerb);
     }
-    else if (prepIsValid(i) && isPreposition(token))
+    else if (isPreposition(token))
     {
-      m_isLastInputValid = true;
+      pendingState = EGrammarState::Preposition;
       m_lastInputPreposition = token;
     }
-    else if (articleIsValid(i) && isArticle(token))
+    else if (isArticle(token))
     {
-      m_isLastInputValid = true;
+      pendingState = EGrammarState::Article;
       m_lastInputArticle = token;
     }
-    else if (objectIsValid(i) && isObject(token))
+    else if (isObject(token))
     {
-      m_isLastInputValid = true;
+      pendingState = EGrammarState::Object;
       m_lastInputObject = token;
     }
     else
     {
-      m_isLastInputValid = false;
+      // Invalid token
       m_response = INVALID_RESPONSE;
+      m_isLastInputValid = false;
       return;
     }
+
+    if (IsTransitionValid(m_currentState, pendingState))
+    {
+      m_currentState = pendingState;
+      m_isLastInputValid = true;
+    }
+    else
+    {
+      m_response = INVALID_RESPONSE;
+      m_isLastInputValid = false;
+      return;
+    }
+  }
+
+  // Final check
+  if (IsTransitionValid(m_currentState, EGrammarState::End))
+  {
+    m_currentState = EGrammarState::End;
+    m_isLastInputValid = true;
+
+    // Also do any final processing now we know the whole sentence is valid
+    updateResponse(m_lastInputVerb);
+  }
+  else
+  {
+    m_response = INVALID_RESPONSE;
+    m_isLastInputValid = false;
+    return;
   }
 }
 

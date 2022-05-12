@@ -1,6 +1,8 @@
 #include <string>
 #include <vector>
 
+#include "ParseStates.h"
+
 class Parser
 {
   public:
@@ -16,7 +18,7 @@ class Parser
     std::string getLastInputArticle() const { return m_lastInputArticle; }
     std::string getLastInputObject() const { return m_lastInputObject; }
 
-std::vector<std::string> getTokens(const std::string& input) const;
+    std::vector<std::string> getTokens(const std::string& input) const;
 
   private:
     bool isVerb(const std::string& input) const;
@@ -25,11 +27,6 @@ std::vector<std::string> getTokens(const std::string& input) const;
     bool isObject(const std::string& input) const;
 
     void updateResponse(const std::string& input);
-
-    bool verbIsValid(int index) { return index == 0; }
-    bool prepIsValid(int index) { return index == 1; }
-    bool articleIsValid(int index) { return index == 1 || index == 2; }
-    bool objectIsValid(int index) { return index == 1 || index == 2 || index == 3; }
 
     const std::vector<std::string> verbs{ "exit", "look", "take" };
     const std::vector<std::string> prepositions{"at"};
@@ -45,4 +42,6 @@ std::vector<std::string> getTokens(const std::string& input) const;
     const std::string INVALID_RESPONSE{ "Sorry?" };
     bool m_shouldQuit{ false };
     bool m_isLastInputValid{ false };
+
+    EGrammarState m_currentState{EGrammarState::Start};
 };

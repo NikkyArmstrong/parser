@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <string>
-#include "src/parser.h"
+#include "src/Parser.h"
 
 bool leave = false;
 std::string input;
