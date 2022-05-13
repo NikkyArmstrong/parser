@@ -4,6 +4,11 @@
 #include <regex>
 #include <sstream>
 
+Parser::Parser()
+  : m_currentState(std::make_unique<Start>())
+{
+}
+
 void Parser::parse(std::string input)
 {
   // reset
@@ -47,23 +52,23 @@ void Parser::parse(std::string input)
       return;
     }
 
-    if (IsTransitionValid(m_currentState, pendingState))
+    if (m_currentState->IsTransitionValid(pendingState))
     {
-      m_currentState = pendingState;
+      m_currentState = createState(pendingState, token);
       m_isLastInputValid = true;
     }
     else
     {
-      m_response = INVALID_RESPONSE;
+      m_response = m_currentState->GetResponse() == "" ? INVALID_RESPONSE : m_currentState->GetResponse();
       m_isLastInputValid = false;
       return;
     }
   }
 
   // Final check
-  if (IsTransitionValid(m_currentState, EGrammarState::End))
+  if (m_currentState->IsTransitionValid(EGrammarState::End))
   {
-    m_currentState = EGrammarState::End;
+    m_currentState = std::make_unique<End>();
     m_isLastInputValid = true;
 
     // Also do any final processing now we know the whole sentence is valid
@@ -104,6 +109,29 @@ void Parser::updateResponse(const std::string& input)
   {
     m_response = "Exiting...";
     m_shouldQuit = true;
+  }
+}
+
+std::unique_ptr<State> Parser::createState(EGrammarState state, std::string token) const
+{
+  // std::move is needed here to avoid a copy on return cause the return
+  // type differs from the actual object returned cause polymorphism
+
+  switch (state)
+  {
+    case EGrammarState::Start:
+      return std::move(std::make_unique<Start>());
+    case EGrammarState::Verb:
+      return std::move(std::make_unique<Verb>(token));
+    case EGrammarState::Preposition:
+      return std::move(std::make_unique<Preposition>(token));
+    case EGrammarState::Article:
+      return std::move(std::make_unique<Article>(token));
+    case EGrammarState::Object:
+      return std::move(std::make_unique<Object>(token));
+    case EGrammarState::End:
+    default:
+      return std::move(std::make_unique<End>());
   }
 }
 

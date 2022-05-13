@@ -1,11 +1,15 @@
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "ParseStates.h"
+#include "states\State.h"
 
 class Parser
 {
   public:
+    Parser();
+
     void parse(std::string input);
 
     bool quitRequested() const { return m_shouldQuit; }
@@ -28,6 +32,8 @@ class Parser
 
     void updateResponse(const std::string& input);
 
+    std::unique_ptr<State> createState(EGrammarState state, std::string token) const;
+
     const std::vector<std::string> verbs{ "exit", "look", "take" };
     const std::vector<std::string> prepositions{"at"};
     const std::vector<std::string> articles{"the"};
@@ -43,5 +49,5 @@ class Parser
     bool m_shouldQuit{ false };
     bool m_isLastInputValid{ false };
 
-    EGrammarState m_currentState{EGrammarState::Start};
+    std::unique_ptr<State> m_currentState;
 };

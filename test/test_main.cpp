@@ -49,7 +49,7 @@ SCENARIO("the parser can identify verbs", "[parser]")
     Parser _parser;
     WHEN("the parser is given a verb")
     {
-      const std::string& v = GENERATE("exit", "look", "take");
+      const std::string& v = GENERATE("exit", "look");
       _parser.parse(v);
       THEN("the parser identifies that this is a validly constructed sentence")
       {
@@ -62,7 +62,7 @@ SCENARIO("the parser can identify verbs", "[parser]")
     }
     AND_WHEN("the parser is given a valid verb ignoring case")
     {
-      const std::string& v = GENERATE("Look", "TAKE", "lOoK");
+      const std::string& v = GENERATE("Look", "lOoK", "EXIT");
       _parser.parse(v);
       THEN("the parser identifies that this is a validly constructed sentence")
       {
@@ -236,6 +236,14 @@ SCENARIO("the parser can detect which verbs are ok alone")
       THEN("the parser can identify that these are valid on their own")
       {
         REQUIRE(_parser.isLastInputValid());
+      }
+    }
+    AND_WHEN("we input a verb that must be alone")
+    {
+      _parser.parse("exit at the door");
+      THEN("the parser can identify that this is invalid")
+      {
+        REQUIRE(!_parser.isLastInputValid());
       }
     }
   }

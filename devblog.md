@@ -289,7 +289,18 @@ We have way more failures now! This is because we said it wasn't valid to go fro
 
 With that now we only have 3 fails. One is because the response to "look at" is not "look at what?" -> we don't support custom responses and probably this shouldn't be a test at this stage - but going into the next bit of code its ok.
 
+`Commit 278cedd173cf9161bfd1036b0572f73931031614`
+
 Now for the fun part - creating the actual states for the state machine. This is how we'll get specific behaviour for specific verbs.
+
+If we keep the pointers in here, talk about factory functions and returning unique_ptrs.
+
+We need to amend tests that contradict - take isn't valid on its own. We also added a test to say that exit MUST be alone.
+
+Now the only thing failing is the custom responses on look. We can do the missing "at" easy because this is detected from the look state. But to detect a missing object we need to track state history.
+To do next - refactor the m_lastInputVerb etc instead to construct a queue/stack(?) of states.
+
+
 
 <!-- Put all this later in the blog -->
 

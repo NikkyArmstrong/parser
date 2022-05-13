@@ -34,3 +34,5 @@
 # Entire folders
 bin/
 build/
+docs/
+.vscode/
