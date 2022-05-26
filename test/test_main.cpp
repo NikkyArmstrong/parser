@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
-#include "../3rdparty/catch.hpp"
+#include "catch.hpp"
 
-#include "../src/Parser.h"
+#include "Parser.h"
 
 SCENARIO("the player can quit the game", "[parser]")
 {
@@ -57,7 +57,7 @@ SCENARIO("the parser can identify verbs", "[parser]")
       }
       AND_THEN("the parser identifies that this sentence contains the correct verb")
       {
-        REQUIRE(_parser.getLastInputVerb() == v);
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Verb) == v);
       }
     }
     AND_WHEN("the parser is given a valid verb ignoring case")
@@ -71,7 +71,7 @@ SCENARIO("the parser can identify verbs", "[parser]")
       AND_THEN("the parser identifies that this sentence contains the correct verb")
       {
         // case insensitive compare in this test
-        REQUIRE(_stricmp(_parser.getLastInputVerb().c_str(), v.c_str()) == 0);
+        REQUIRE(_stricmp(_parser.getLastInputOfType(EGrammarState::Verb).c_str(), v.c_str()) == 0);
       }
     }
     AND_WHEN("the parser is given an input that isn't a verb")
@@ -100,8 +100,8 @@ SCENARIO("the parser can identify grammatical parts of a sentence", "[parser]")
       }
       AND_THEN("the parser can give us the grammar from the sentence")
       {
-        REQUIRE(_parser.getLastInputVerb() == "look");
-        REQUIRE(_parser.getLastInputObject() == "donkey");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Verb) == "look");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Object) == "donkey");
       }
     }
     AND_WHEN("the parser is given a sentence with a verb, a preposition, and an object")
@@ -113,9 +113,9 @@ SCENARIO("the parser can identify grammatical parts of a sentence", "[parser]")
       }
       AND_THEN("the parser can give us the grammar from the sentence")
       {
-        REQUIRE(_parser.getLastInputVerb() == "look");
-        REQUIRE(_parser.getLastInputPreposition() == "at");
-        REQUIRE(_parser.getLastInputObject() == "tree");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Verb) == "look");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Preposition) == "at");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Object) == "tree");
       }
     }
     AND_WHEN("the parser is given a sentence with a verb, preposition, definite article, and object")
@@ -127,10 +127,10 @@ SCENARIO("the parser can identify grammatical parts of a sentence", "[parser]")
       }
       AND_THEN("the parser can give us the grammar from the sentence")
       {
-        REQUIRE(_parser.getLastInputVerb() == "look");
-        REQUIRE(_parser.getLastInputPreposition() == "at");
-        REQUIRE(_parser.getLastInputArticle() == "the");
-        REQUIRE(_parser.getLastInputObject() == "dog");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Verb) == "look");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Preposition) == "at");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Article) == "the");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Object) == "dog");
       }
     }
     AND_WHEN("the parser is given a sentence with a verb, definite article, and object")
@@ -142,9 +142,9 @@ SCENARIO("the parser can identify grammatical parts of a sentence", "[parser]")
       }
       AND_THEN("the parser can give us the grammar from the sentence")
       {
-        REQUIRE(_parser.getLastInputVerb() == "take");
-        REQUIRE(_parser.getLastInputArticle() == "the");
-        REQUIRE(_parser.getLastInputObject() == "vase");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Verb) == "take");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Article) == "the");
+        REQUIRE(_parser.getLastInputOfType(EGrammarState::Object) == "vase");
       }
     }
   }
@@ -174,7 +174,7 @@ SCENARIO("the parser can identify sentences with invalid grammar construction", 
       }
       AND_THEN("the parser gives a meaningful response")
       {
-        REQUIRE(_parser.getResponse() == "look at what?");
+        REQUIRE(_parser.getResponse() == "Look at what?");
       }
     }
     WHEN("the parser is given a sentence with invalid characters")

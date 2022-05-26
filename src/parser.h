@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "ParseStates.h"
-#include "states\State.h"
+#include "State.h"
 
 class Parser
 {
@@ -17,14 +17,13 @@ class Parser
 
     bool isLastInputValid() const { return m_isLastInputValid; }
 
-    std::string getLastInputVerb() const { return m_lastInputVerb; }
-    std::string getLastInputPreposition() const { return m_lastInputPreposition; }
-    std::string getLastInputArticle() const { return m_lastInputArticle; }
-    std::string getLastInputObject() const { return m_lastInputObject; }
+    std::string getLastInputOfType(EGrammarState type) const;
 
     std::vector<std::string> getTokens(const std::string& input) const;
 
   private:
+    void Reset();
+
     bool isVerb(const std::string& input) const;
     bool isPreposition(const std::string& input) const;
     bool isArticle(const std::string& input) const;
@@ -40,14 +39,9 @@ class Parser
 
     std::string m_response;
 
-    std::string m_lastInputVerb;
-    std::string m_lastInputPreposition;
-    std::string m_lastInputArticle;
-    std::string m_lastInputObject;
-
     const std::string INVALID_RESPONSE{ "Sorry?" };
     bool m_shouldQuit{ false };
     bool m_isLastInputValid{ false };
 
-    std::unique_ptr<State> m_currentState;
+    std::vector<std::unique_ptr<State>> m_currentStates;
 };

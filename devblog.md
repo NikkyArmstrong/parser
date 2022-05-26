@@ -293,12 +293,42 @@ With that now we only have 3 fails. One is because the response to "look at" is 
 
 Now for the fun part - creating the actual states for the state machine. This is how we'll get specific behaviour for specific verbs.
 
-If we keep the pointers in here, talk about factory functions and returning unique_ptrs.
+If we keep the pointers in here, talk about factory functions and returning unique_ptrs. Also talk about how later we will preallocate all of the verbs because we know everything we need to know about them at the start.
 
 We need to amend tests that contradict - take isn't valid on its own. We also added a test to say that exit MUST be alone.
 
 Now the only thing failing is the custom responses on look. We can do the missing "at" easy because this is detected from the look state. But to detect a missing object we need to track state history.
 To do next - refactor the m_lastInputVerb etc instead to construct a queue/stack(?) of states.
+
+`Commit bd9155988ee8de1d77abe06640ecb5bd0a8106b7`
+
+I made a vector to start with - lots of reasons I don't like this. Vector allocates as it resizes, we've now got unique ptrs inside vectors, all the bad things. But its ok for now. Querying whether a map of state->object is a better plan? Now gonna get rid of the m_lastInput* variables. Immediately - yeah I need a map. Otherwise we can index off the end of the array. Much better to use a map or a find by type on the vector.
+
+Let's think about the advantages of each:
+Map-> we could allocate all the keys and match with nullptr. Then based on valid transitions, assign the key/ptr pairs. Then return the value found for the key or an error if we didn't find it. For printing the error message, we'd need to check specifically for each type if its there or not again to reconstruct the error.
+
+Vector-> Can be resized to 4 at the start and then just cleared which wouldn't reallocate. Push_back when we find a valid transition which preserves order - can just iterate through. Need to use a std::find to return the individual elements rather than a key lookup.
+
+We're gonna stick with vector until we really can't do something - don't prematurely optimise.
+
+What we can do, is generecise the find alg. Needed to add a None state so that all states have a Type. Also made sure each IsTransitionValid function is inclusive, not exclusive, so that newly added states aren't accidentally valid. Once we've done this we're back to the same one test failing, for 'look at what'. Now we can refactor the tests not to use all the helper functions.
+
+Done. NOW - let's address that "look at what" test. By the time we've got to know the sentence is invalid, we're at the end. We need to know which verb was used so we can give context to the error message. Nothing else is really needed to give context, (later we may have situations where the sentence is complete but its invalid so we need to know the object (e.g. you can't take the X - generic, maybe we want something more specific like "its glued down!"). Let's focus on missing things, because that's the test we have.
+
+We need some error codes so we can ask the verb what the response should be in a given situation. We're currently setting the response inside IsTransitionValid which is not good practice. It should be a const function, and then we should have a separate function to ask for the response. IsTransitionValid though instead of a bool could return an error code, so that we can use that to craft the response.
+
+Note: this is about the point where we need to expand our tests to include State tests - we have so far been covered while refactoring by the parser tests - but now these objects are getting bigger and more complex logic, its time to translate those to tests before we continue. I'm going to first write a test for the Verb state to make sure it returns the correct error codes. This will also help us to know what needs to be in our error code enum. I've added a test for a transition not covered in the parser which is moving to the Start state. This should not be possible to do. I've added a generic error code for this. We can add these tests for every state we have. This doesn't cover chaining, this is still covered by the tests for the parser (and we're still on the way to implementing it!). But this will make sure our transition checks are corret - the purpose of unit tests. We need to write separate tests for "take" and "look" because they have different transitions. The invalid transition state will be mapped to the existing "Sorry?" response. Some things we've discovered don't have tests - e.g. Verb->Verb or transitioning to the same state we're already in.
+
+We could also factor out the logic to early exit transitions that are invalid from all verbs - do this when we use inheritance.
+
+Now we can override GetResponse to take an error code and give us the right error. Now we can say if we are a verb and we're missing an object -> what do we look at? We can run the tests and make sure the State tests pass. The parser tests will fail, we need to refactor the parser in a moment. Write here about how to run tests with only certain categories.
+
+Now - we'll extend these tests to cover each verb we currently support, and the rest of the grammar object. You can see that in commit: <TBA>, <TBA>
+
+(Quick detour to make the cmake better and to split the tests into multiple files: `fdcc11cddd2becb30fb8009816ccbaad287d5a89`. For some reason intellisense doesn't work for "Parser.h" but does for <src/Parser.h> even though both compile and work - fixed by updating c_cpp_properties.json)
+
+Then - we update the parser tests to remove tests if they are duplicates of the state tests and we think they are unnecessary, and update the parser to use the correct logic.
+
 
 
 

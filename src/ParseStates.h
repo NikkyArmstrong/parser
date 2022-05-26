@@ -7,5 +7,13 @@ enum class EGrammarState
   Preposition,
   Article,
   Object,
-  End
+  End,
+  None
+};
+
+enum class EErrorCode {
+  Success = 0,
+  MissingPreposition,
+  MissingObject,
+  InvalidTransition
 };
