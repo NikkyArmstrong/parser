@@ -1,6 +1,5 @@
 add_library(3rdparty catch.hpp)
 
-list(APPEND EXTRA_LIBS 3rdparty)
-target_link_libraries(3rdparty PUBLIC ${EXTRA_LIBS})
+set_target_properties(3rdparty PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(3rdparty PUBLIC "${PROJECT_BINARY_DIR}")
