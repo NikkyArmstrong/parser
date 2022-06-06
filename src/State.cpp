@@ -83,7 +83,7 @@ std::string Verb::GetResponse(EErrorCode error) const
       }
       else
       {
-        return m_response;
+        return "";
       }
     case EErrorCode::InvalidTransition:
     default:

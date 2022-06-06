@@ -323,11 +323,18 @@ We could also factor out the logic to early exit transitions that are invalid fr
 
 Now we can override GetResponse to take an error code and give us the right error. Now we can say if we are a verb and we're missing an object -> what do we look at? We can run the tests and make sure the State tests pass. The parser tests will fail, we need to refactor the parser in a moment. Write here about how to run tests with only certain categories.
 
-Now - we'll extend these tests to cover each verb we currently support, and the rest of the grammar object. You can see that in commit: <TBA>, <TBA>
+Now - we'll extend these tests to cover each verb we currently support, and the rest of the grammar object. You can see that in commit: `460a5f2044f2917f18fcfb762fea4b8512e686e4`
 
 (Quick detour to make the cmake better and to split the tests into multiple files: `fdcc11cddd2becb30fb8009816ccbaad287d5a89`. For some reason intellisense doesn't work for "Parser.h" but does for <src/Parser.h> even though both compile and work - fixed by updating c_cpp_properties.json)
 
 Then - we update the parser tests to remove tests if they are duplicates of the state tests and we think they are unnecessary, and update the parser to use the correct logic.
+In order for the tests to pass now, the default behaviour for GetResponse needs to be to return "Sorry?".
+
+ALL TESTS PASS
+
+NOW - the code could be better, in lots of places. But we are back to only having the one failing test. When we pass this test we can do a refactor pass.
+
+
 
 
 

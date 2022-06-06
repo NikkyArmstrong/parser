@@ -57,7 +57,7 @@ SCENARIO("the parser can identify verbs", "[parser]")
       }
       AND_THEN("the parser identifies that this sentence contains the correct verb")
       {
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Verb) == v);
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Verb) == v);
       }
     }
     AND_WHEN("the parser is given a valid verb ignoring case")
@@ -71,7 +71,7 @@ SCENARIO("the parser can identify verbs", "[parser]")
       AND_THEN("the parser identifies that this sentence contains the correct verb")
       {
         // case insensitive compare in this test
-        REQUIRE(_stricmp(_parser.getLastInputOfType(EGrammarState::Verb).c_str(), v.c_str()) == 0);
+        REQUIRE(_stricmp(_parser.getLastTokenOfType(EGrammarState::Verb).c_str(), v.c_str()) == 0);
       }
     }
     AND_WHEN("the parser is given an input that isn't a verb")
@@ -100,8 +100,9 @@ SCENARIO("the parser can identify grammatical parts of a sentence", "[parser]")
       }
       AND_THEN("the parser can give us the grammar from the sentence")
       {
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Verb) == "look");
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Object) == "donkey");
+        REQUIRE(_parser.getLastStateOfType(EGrammarState::Verb) != nullptr);
+        REQUIRE(_parser.getLastStateOfType(EGrammarState::Verb)->GetToken() == "look");
+        REQUIRE(_parser.getLastStateOfType(EGrammarState::Object)->GetToken() == "donkey");
       }
     }
     AND_WHEN("the parser is given a sentence with a verb, a preposition, and an object")
@@ -113,9 +114,9 @@ SCENARIO("the parser can identify grammatical parts of a sentence", "[parser]")
       }
       AND_THEN("the parser can give us the grammar from the sentence")
       {
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Verb) == "look");
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Preposition) == "at");
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Object) == "tree");
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Verb) == "look");
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Preposition) == "at");
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Object) == "tree");
       }
     }
     AND_WHEN("the parser is given a sentence with a verb, preposition, definite article, and object")
@@ -127,10 +128,10 @@ SCENARIO("the parser can identify grammatical parts of a sentence", "[parser]")
       }
       AND_THEN("the parser can give us the grammar from the sentence")
       {
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Verb) == "look");
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Preposition) == "at");
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Article) == "the");
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Object) == "dog");
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Verb) == "look");
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Preposition) == "at");
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Article) == "the");
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Object) == "dog");
       }
     }
     AND_WHEN("the parser is given a sentence with a verb, definite article, and object")
@@ -142,9 +143,9 @@ SCENARIO("the parser can identify grammatical parts of a sentence", "[parser]")
       }
       AND_THEN("the parser can give us the grammar from the sentence")
       {
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Verb) == "take");
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Article) == "the");
-        REQUIRE(_parser.getLastInputOfType(EGrammarState::Object) == "vase");
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Verb) == "take");
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Article) == "the");
+        REQUIRE(_parser.getLastTokenOfType(EGrammarState::Object) == "vase");
       }
     }
   }
@@ -171,6 +172,10 @@ SCENARIO("the parser can identify sentences with invalid grammar construction", 
       THEN("the parser identifies that this is invalid")
       {
         REQUIRE(!_parser.isLastInputValid());
+      }
+      AND_THEN("the error code is 'missing object'")
+      {
+        REQUIRE(_parser.getLastError() == EErrorCode::MissingObject);
       }
       AND_THEN("the parser gives a meaningful response")
       {

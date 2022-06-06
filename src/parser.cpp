@@ -54,34 +54,63 @@ void Parser::parse(std::string input)
       return;
     }
 
-    EErrorCode result = m_currentStates.back()->IsTransitionValid(pendingState);
-    if (result == EErrorCode::Success)
+    m_lastError = m_currentStates.back()->IsTransitionValid(pendingState);
+    if (m_lastError == EErrorCode::Success)
     {
       m_currentStates.push_back(createState(pendingState, token));
       m_isLastInputValid = true;
     }
     else
     {
-      m_response = m_currentStates.back()->GetResponse(result);
+      // The verb is likely to give us the most information about the error, so ask there first.
+      State* lastVerb = getLastStateOfType(EGrammarState::Verb);
+      if (lastVerb)
+      {
+        m_response = lastVerb->GetResponse(m_lastError);
+      }
+      else
+      {
+        m_response = m_currentStates.back()->GetResponse(m_lastError);
+      }
+
       m_isLastInputValid = false;
       return;
     }
   }
 
   // Final check
-  if (m_currentStates.back()->IsTransitionValid(EGrammarState::End) == EErrorCode::Success)
+  m_lastError = m_currentStates.back()->IsTransitionValid(EGrammarState::End);
+  if (m_lastError == EErrorCode::Success)
   {
     m_isLastInputValid = true;
 
     // Also do any final processing now we know the whole sentence is valid
-    // @todo We should be doing a find here for the verb
-    m_response = m_currentStates[1]->GetResponse(EErrorCode::Success);
+    State* lastVerb = getLastStateOfType(EGrammarState::Verb);
+
+    if (lastVerb)
+    {
+      m_response = lastVerb->GetResponse(EErrorCode::Success);
+      if (lastVerb->GetToken() == "exit")
+      {
+        m_shouldQuit = true;
+      }
+    }
   }
   else
   {
-    m_response = INVALID_RESPONSE;
-    m_isLastInputValid = false;
-    return;
+      // The verb is likely to give us the most information about the error, so ask there first.
+      State* lastVerb = getLastStateOfType(EGrammarState::Verb);
+      if (lastVerb)
+      {
+        m_response = lastVerb->GetResponse(m_lastError);
+      }
+      else
+      {
+        m_response = m_currentStates.back()->GetResponse(m_lastError);
+      }
+
+      m_isLastInputValid = false;
+      return;
   }
 }
 
@@ -153,10 +182,18 @@ std::vector<std::string> Parser::getTokens(const std::string& input) const
   return result;
 }
 
-std::string Parser::getLastInputOfType(EGrammarState type) const
+std::string Parser::getLastTokenOfType(EGrammarState type) const
 {
   const auto& result = std::find_if(m_currentStates.begin(), m_currentStates.end(),
     [type](auto&& state){ return state->GetType() == type; });
 
   return result != m_currentStates.end() ? (*result)->GetToken() : "";
+}
+
+State* Parser::getLastStateOfType(EGrammarState type) const
+{
+  const auto& result = std::find_if(m_currentStates.begin(), m_currentStates.end(),
+    [type](auto&& state){ return state->GetType() == type; });
+
+  return result != m_currentStates.end() ? (*result).get() : nullptr;
 }

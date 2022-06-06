@@ -13,7 +13,11 @@ public:
 
   virtual EErrorCode IsTransitionValid(EGrammarState nextState) = 0;
 
-  virtual std::string GetResponse(EErrorCode error) const { return m_response; }
+  virtual std::string GetResponse(EErrorCode error) const
+  {
+    return error == EErrorCode::Success ? "" : "Sorry?";
+  }
+
   std::string GetToken() const { return m_token; }
 
   EGrammarState GetType() const { return m_type; }

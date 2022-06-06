@@ -17,9 +17,13 @@ class Parser
 
     bool isLastInputValid() const { return m_isLastInputValid; }
 
-    std::string getLastInputOfType(EGrammarState type) const;
+    std::string getLastTokenOfType(EGrammarState type) const;
+
+    State* getLastStateOfType(EGrammarState type) const;
 
     std::vector<std::string> getTokens(const std::string& input) const;
+
+    EErrorCode getLastError() const { return m_lastError; }
 
   private:
     void Reset();
@@ -42,6 +46,7 @@ class Parser
     const std::string INVALID_RESPONSE{ "Sorry?" };
     bool m_shouldQuit{ false };
     bool m_isLastInputValid{ false };
+    EErrorCode m_lastError{EErrorCode::Success};
 
     std::vector<std::unique_ptr<State>> m_currentStates;
 };
