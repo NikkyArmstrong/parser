@@ -11,6 +11,8 @@ configure_file (
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+SET(CMAKE_C_COMPILER C:/ProgramData/chocolatey/bin/gcc.exe)
+SET(CMAKE_CXX_COMPILER C:/ProgramData/chocolatey/bin/g++.exe)
 
 add_subdirectory(src)
 list(APPEND EXTRA_LIBS src)

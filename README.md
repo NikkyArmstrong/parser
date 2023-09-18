@@ -5,8 +5,9 @@ Text parser for a text adventure. This repo just holds the C++ code for the pars
 
 ## Compile
 ```
+mkdir build //if it doesn't exist
 cd build
-cmake ../
+cmake .. -G "MinGW Makefiles"
 cmake --build .
 ```
 

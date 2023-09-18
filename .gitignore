@@ -36,3 +36,4 @@ bin/
 build/
 docs/
 .vscode/
+.idea/
